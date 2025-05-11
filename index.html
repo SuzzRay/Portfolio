@@ -38,7 +38,7 @@
     <div class="content-container">
       <!-- Navbar -->
       <nav class="navbar" style="position: fixed; top: 0; left: 0; right: 0; z-index: 999; background: rgba(10, 12, 19, 0.95); display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.5rem; border-radius: 0 0 12px 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);">
-  <a href="index.html" class="logo" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: white;">
+  <a href="/" class="logo" style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: white;">
     <i class="fa-solid fa-hashtag" style="font-size: 2rem; color: #a855f7;"></i>
     <span style="font-size: 1.25rem; font-weight: 500;">Subhra</span>
   </a>
@@ -82,6 +82,7 @@
     <br>
     <br>
     <br>
+   </main>
       <!-- About / CTA Section -->
       <section class="bg-white dark:bg-gray-900" id="about">
         <div class="gap-8 items-center py-8 px-4 mx-auto max-w-screen-xl xl:gap-16 md:grid md:grid-cols-2 sm:py-16 lg:px-6">
@@ -100,7 +101,11 @@ Always up-to-date with the latest technologies, I believe the future belongs to 
           </div>
         </div>
       </section>
-
+   <main class="main-container bg-grid gradient-dots">
+    <!-- Ambient background with moving particles -->
+    <div class="particles-container">
+      <canvas id="sparkles-canvas"></canvas>
+    </div>
       <!-- Skills Section -->
       <section class="text-gray-600 body-font" style="padding-top: 4rem; padding-bottom: 6rem; background: rgba(255, 255, 255, 0.02); border-radius: 16px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2); backdrop-filter: blur(4px); max-width: 1200px; margin: 3rem auto;">
         <div class="container px-5 mx-auto">
