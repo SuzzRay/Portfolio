@@ -26,33 +26,41 @@ document.addEventListener('DOMContentLoaded', () => {
       container.appendChild(paper);
       
       // Animate the paper
-      animatePaper(paper);
+      requestAnimationFrame(() => animatePaper(paper));
+
     }
   }
   
   // Animate a single paper
   function animatePaper(paper) {
-    const duration = 20000 + Math.random() * 10000; // 20-30 seconds
-    
-    function move() {
-      // Generate new random position
-      const newX = Math.random() * (window.innerWidth - 100);
-      const newY = Math.random() * (window.innerHeight - 100);
-      const rotation = Math.random() * 360;
-      
-      // Apply transition
-      paper.style.transition = `transform ${duration/1000}s linear, left ${duration/1000}s linear, top ${duration/1000}s linear`;
-      paper.style.transform = `rotate(${rotation}deg)`;
-      paper.style.left = `${newX}px`;
-      paper.style.top = `${newY}px`;
-      
-      // Schedule next movement
-      setTimeout(move, duration);
-    }
-    
-    // Start movement
-    move();
+  let x = parseFloat(paper.style.left);
+  let y = parseFloat(paper.style.top);
+  let angle = Math.random() * 2 * Math.PI;
+  let speed = 0.3 + Math.random() * 0.5;
+  let rotation = Math.random() * 360;
+  let rotationSpeed = (Math.random() - 0.5) * 0.2;
+
+  function update() {
+    // Movement direction
+    x += Math.cos(angle) * speed;
+    y += Math.sin(angle) * speed;
+
+    // Bounce off screen edges
+    if (x < 0 || x > window.innerWidth - 60) angle = Math.PI - angle;
+    if (y < 0 || y > window.innerHeight - 60) angle = -angle;
+
+    rotation += rotationSpeed;
+
+    paper.style.left = `${x}px`;
+    paper.style.top = `${y}px`;
+    paper.style.transform = `rotate(${rotation}deg)`;
+
+    requestAnimationFrame(update);
   }
+
+  update();
+}
+
   
   // Handle window resize
   window.addEventListener('resize', createFloatingPapers);
