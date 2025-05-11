@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function setCanvasDimensions() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    ctx.imageSmoothingEnabled = false;
+
   }
   
   setCanvasDimensions();
@@ -22,41 +24,51 @@ document.addEventListener('DOMContentLoaded', () => {
   // Particle class
   class Particle {
     constructor() {
+      this.size = 2; // instead of 1
+
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
-      this.size = Math.random() * (1.4 - 0.6) + 0.6;
+      this.size = 1; // Solid visible dot size
+
       this.speedX = Math.random() * 0.5 - 0.25;
       this.speedY = Math.random() * 0.5 - 0.25;
     }
     
     update() {
-      this.x += this.speedX;
-      this.y += this.speedY;
-      
-      // Wrap around edges
-      if (this.x > canvas.width) this.x = 0;
-      if (this.x < 0) this.x = canvas.width;
-      if (this.y > canvas.height) this.y = 0;
-      if (this.y < 0) this.y = canvas.height;
-      
-      // Mouse interaction
-      const dx = mousePosition.x - this.x;
-      const dy = mousePosition.y - this.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      
-      if (distance < 100) {
-        const angle = Math.atan2(dy, dx);
-        this.x -= Math.cos(angle) * 1;
-        this.y -= Math.sin(angle) * 1;
-      }
-    }
-    
-    draw() {
-      ctx.fillStyle = '#FFFFFF';
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
+  this.x += this.speedX;
+  this.y += this.speedY;
+
+  const dx = mousePosition.x - this.x;
+  const dy = mousePosition.y - this.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  // Cursor drag repulsion
+  if (distance < 80) {
+    const force = (80 - distance) / 80; // closer = stronger force
+    const angle = Math.atan2(dy, dx);
+    const pushX = Math.cos(angle) * force;
+    const pushY = Math.sin(angle) * force;
+    this.x -= pushX * 2;
+    this.y -= pushY * 2;
+  }
+
+  // Wrap around
+  if (this.x > canvas.width) this.x = 0;
+  if (this.x < 0) this.x = canvas.width;
+  if (this.y > canvas.height) this.y = 0;
+  if (this.y < 0) this.y = canvas.height;
+}
+
+   draw() {
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+  ctx.fillStyle = '#00ffff'; // bright teal/cyan
+  ctx.shadowBlur = 0; // no glow
+  ctx.fill();
+  ctx.restore();
+}
+
   }
   
   // Initialize particles
