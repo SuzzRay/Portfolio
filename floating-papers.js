@@ -1,15 +1,27 @@
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("floating-papers")
-  const paperCount = 6
+
+  // Detect if it's mobile device
+  const isMobile = window.innerWidth <= 768
+  const paperCount = isMobile ? 3 : 4
+
+  // Store animation state to prevent restart on refresh
+  let animationsStarted = false
 
   // Create floating papers
   function createFloatingPapers() {
-    // Clear existing papers
-    container.innerHTML = ""
+    // Don't clear existing papers if animations already started on mobile
+    if (isMobile && animationsStarted) return
+
+    // Clear existing papers only if not mobile or first time
+    if (!isMobile || !animationsStarted) {
+      container.innerHTML = ""
+    }
 
     for (let i = 0; i < paperCount; i++) {
       const paper = document.createElement("div")
       paper.className = "floating-paper"
+      paper.setAttribute("data-paper-id", i)
 
       const icon = document.createElement("i")
       icon.className = "fa-solid fa-file-lines"
@@ -28,6 +40,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // Animate the paper
       requestAnimationFrame(() => animatePaper(paper))
     }
+
+    animationsStarted = true
   }
 
   // Animate a single paper
@@ -35,9 +49,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let x = Number.parseFloat(paper.style.left)
     let y = Number.parseFloat(paper.style.top)
     let angle = Math.random() * 2 * Math.PI
-    const speed = 0.3 + Math.random() * 0.5
+
+    // Much slower speed for mobile devices
+    const baseSpeed = isMobile ? 0.03 : 0.1
+    const speed = baseSpeed + Math.random() * (isMobile ? 0.07 : 0.2)
+
     let rotation = Math.random() * 360
-    const rotationSpeed = (Math.random() - 0.5) * 0.2
+    const rotationSpeed = (Math.random() - 0.5) * (isMobile ? 0.01 : 0.05)
 
     function update() {
       // Movement direction
@@ -60,8 +78,14 @@ document.addEventListener("DOMContentLoaded", () => {
     update()
   }
 
-  // Handle window resize
-  window.addEventListener("resize", createFloatingPapers)
+  // Handle window resize - but don't restart animations on mobile
+  window.addEventListener("resize", () => {
+    const newIsMobile = window.innerWidth <= 768
+    if (newIsMobile !== isMobile && !newIsMobile) {
+      // Only recreate if switching from mobile to desktop
+      createFloatingPapers()
+    }
+  })
 
   // Initialize
   createFloatingPapers()
