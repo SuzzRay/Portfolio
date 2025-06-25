@@ -77,8 +77,8 @@ function initMouseFollower() {
 
   // Smooth mouse follower animation
   function animateMouseFollower() {
-    mouseX += (targetX - mouseX) * 0.05
-    mouseY += (targetY - mouseY) * 0.05
+    mouseX += (targetX - mouseX) * 0.1
+    mouseY += (targetY - mouseY) * 0.1
 
     mouseFollower.style.left = mouseX + "px"
     mouseFollower.style.top = mouseY + "px"
@@ -208,8 +208,8 @@ function initHeroAnimation() {
       this.x = Math.random() * canvas.width
       this.y = Math.random() * canvas.height
       this.size = Math.random() * 5 + 1
-      this.speedX = Math.random() * 0.5 - 0.25
-      this.speedY = Math.random() * 0.5 - 0.25
+      this.speedX = Math.random() * 2 - 1
+      this.speedY = Math.random() * 2 - 1
       this.hue = Math.random() * 60 + 200 // Blue to purple range
     }
 
@@ -237,7 +237,7 @@ function initHeroAnimation() {
   // Initialize particles
   function initParticles() {
     particles = []
-    const particleCount = Math.min(25, Math.floor((canvas.width * canvas.height) / 15000))
+    const particleCount = Math.min(50, Math.floor((canvas.width * canvas.height) / 10000))
 
     for (let i = 0; i < particleCount; i++) {
       particles.push(new Particle())
@@ -453,7 +453,7 @@ function throttle(func, limit) {
   let inThrottle
   return function () {
     const args = arguments
-
+    
     if (!inThrottle) {
       func.apply(this, args)
       inThrottle = true
