@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     
   </head>
-  <body>
+    <body>
     <!-- Mouse Follower -->
     <div class="mouse-dot"></div>
     <!-- Scroll Progress -->
@@ -21,11 +21,11 @@
           <span class="brand-kka">bhra</span>
         </div>
         <div class="nav-links">
-          <a href="#home">Home</a>
           <a href="#about">About</a>
           <a href="#skills">Skills</a>
-          <a href="#experience">Projects</a>
+          <a href="#projects">Projects</a>
           <a href="#contact">Contact</a>
+          <button class="resume-btn">Resume</button>
         </div>
         <button class="mobile-menu-btn">
           <i class="fas fa-bars"></i>
@@ -34,14 +34,36 @@
     </nav>
     <!-- Mobile Menu -->
     <div class="mobile-menu">
-      <div class="mobile-menu-content">
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#skills">Skills</a>
-        <a href="#experience">Projects</a>
-        <a href="#contact">Contact</a>
+  <button class="mobile-menu-close">
+    <i class="fas fa-times"></i>
+  </button>
+  <div class="mobile-menu-container">
+    <div class="mobile-menu-content">
+      <div class="mobile-menu-inner">
+        <!-- Fixed Page Labels Around Circle -->
+        <div class="page-labels">
+          <div class="page-label" data-page="home">Home</div>
+          <div class="page-label" data-page="about">About</div>
+          <div class="page-label" data-page="projects">Projects</div>
+          <div class="page-label" data-page="skills">Skills</div>
+          <div class="page-label" data-page="contact">Contact</div>
+        </div>
+
+        <!-- Circular Track -->
+        <div class="circle-track"></div>
+
+        <!-- Draggable Slider Node -->
+        <div class="slider-node" id="sliderNode"></div>
+
+        <!-- Center Info Display -->
+        <div class="center-info">
+          <div class="center-page-name" id="centerPageName">Home</div>
+          <div class="center-page-desc" id="centerPageDesc">Welcome to my portfolio</div>
+        </div>
       </div>
     </div>
+  </div>
+</div>
     <!-- Hero Section -->
     <section class="hero" id="hero">
       <div class="hero-bg">
@@ -201,7 +223,7 @@
       </div>
     </section>
     <!-- Projects Section -->
-    <section id="experience" class="experience">
+    <section id="projects" class="experience">
       <div class="section-bg">
         <div class="bg-blob bg-blob-7"></div>
         <div class="bg-blob bg-blob-8"></div>
@@ -258,96 +280,72 @@
       </div>
     </section>
     <!-- Contact Section -->
-    <section id="contact" class="contact">
-      <div class="section-bg">
-        <div class="bg-blob bg-blob-9"></div>
-        <div class="bg-blob bg-blob-10"></div>
+    <section id="contact" class="contact" style="padding: 40px 0; position: relative;">
+  <div class="section-bg">
+    <div class="bg-blob bg-blob-9"></div>
+    <div class="bg-blob bg-blob-10"></div>
+  </div>
+  <div class="container" style="max-width: 800px; margin: auto; text-align: center;">
+    <div class="section-heading">
+      <div class="section-badge" style="font-size: 14px; color: #888;">Let's work together</div>
+      <h2 class="section-title" style="font-size: 32px; margin: 10px 0;">Get In Touch</h2>
+      <div class="section-line" style="width: 60px; height: 3px; background: #000; margin: 0 auto 30px;"></div>
+    </div>
+
+    <div class="glass-card" style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.1);">
+      <h3 style="margin-bottom: 20px;">Contact Information</h3>
+
+      <!-- Contact Links Inline -->
+      <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+        <!-- Email -->
+        <a href="mailto:subhraraydeep@gmail.com" target="_blank" style="display: flex; align-items: center; color: #000; text-decoration: none; gap: 8px; font-size: 18px;" onmouseover="this.style.color='#00aaff'" onmouseout="this.style.color='#000'">
+          <i class="fas fa-envelope" style="font-size: 22px;"></i>
+          <span>Email</span>
+        </a>
+
+        <!-- LinkedIn -->
+        <a href="https://www.linkedin.com/in/subhradeepray/" target="_blank" style="display: flex; align-items: center; color: #000; text-decoration: none; gap: 8px; font-size: 18px;" onmouseover="this.style.color='#0077b5'" onmouseout="this.style.color='#000'">
+          <i class="fab fa-linkedin" style="font-size: 22px;"></i>
+          <span>LinkedIn</span>
+        </a>
+
+        <!-- GitHub -->
+        <a href="https://github.com/SuzzRay" target="_blank" style="display: flex; align-items: center; color: #000; text-decoration: none; gap: 8px; font-size: 18px;" onmouseover="this.style.color='#333'" onmouseout="this.style.color='#000'">
+          <i class="fab fa-github" style="font-size: 22px;"></i>
+          <span>GitHub</span>
+        </a>
       </div>
-      <div class="container">
-        <div class="section-heading">
-          <div class="section-badge">Let's work together</div>
-          <h2 class="section-title">Get In Touch</h2>
-          <div class="section-line"></div>
-        </div>
-        <div class="contact-content-centered">
-          <div class="contact-info-centered">
-            <div class="glass-card">
-              <h3>Contact Information</h3>
-              <!-- Email -->
-              <div class="contact-item">
-                <a href="mailto:subhraraydeep@gmail.com" target="_blank" class="contact-link">
-                  <div class="contact-icon">
-                    <i class="fas fa-envelope"></i>
-                  </div>
-                  <div class="contact-details">
-                    <div class="contact-label">Email</div>
-                    <div class="contact-value">hello@world.com</div>
-                  </div>
-                </a>
-              </div>
-              <!-- LinkedIn -->
-              <div class="contact-item">
-                <a href="https://www.linkedin.com/in/subhradeepray/" target="_blank" class="contact-link">
-                  <div class="contact-icon">
-                    <i class="fab fa-linkedin"></i>
-                  </div>
-                  <div class="contact-details">
-                    <div class="contact-label">LinkedIn</div>
-                    <div class="contact-value">linkedin.com/in/</div>
-                  </div>
-                </a>
-              </div>
-              <!-- GitHub -->
-              <div class="contact-item">
-                <a href="https://github.com/SuzzRay" target="_blank" class="contact-link">
-                  <div class="contact-icon">
-                    <i class="fab fa-github"></i>
-                  </div>
-                  <div class="contact-details">
-                    <div class="contact-label">GitHub</div>
-                    <div class="contact-value">github.com/</div>
-                  </div>
-                </a>
-              </div>
-              <!-- Status -->
-              <div class="contact-status">
-                <h4>Current Status</h4>
-                <div class="status-item">
-                  <div class="status-dot"></div>
-                  <span>Available for freelance work and full-time opportunities</span>
-                </div>
-              </div>
-            </div>
-          </div>
+
+      <!-- Status -->
+      <div class="contact-status" style="margin-top: 30px;">
+        <h4 style="margin-bottom: 10px;">Current Status</h4>
+        <div class="status-item" style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+          <div class="status-dot" style="width: 10px; height: 10px; border-radius: 50%; background-color: green;"></div>
+          <span>Available for freelance work and full-time opportunities</span>
         </div>
       </div>
-      </div>
-    </section>
+    </div>
+  </div>
+</section>
+
+<!-- Font Awesome Icons CDN -->
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
     <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-brand">
-            <div class="brand">
-              <span class="brand-shine">Su</span>
-              <span class="brand-kka">bhra</span>
-            </div>
-            <p class="footer-copyright">© 2025 Subhradeep Ray. All rights reserved.</p>
-          </div>
-          <div class="footer-social">
-            <a href="https://github.com/SuzzRay" target="_blank">
-              <i class="fab fa-github"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/subhradeepray/" target="_blank">
-              <i class="fab fa-linkedin"></i>
-            </a>
-            <a href="mailto:subhraraydeep@gmail.com">
-              <i class="fas fa-envelope"></i>
-            </a>
-          </div>
+    <footer class="footer" style="background-color: #111; padding: 20px 0; text-align: center;">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="brand" style="font-size: 24px; font-weight: bold; color: white;">
+          <span class="brand-shine" style="color: #00ffff;">Su</span>
+          <span class="brand-kka">bhra</span>
         </div>
+        <p style="color: white; margin-top: 10px;">© 2025 Subhradeep Ray. All rights reserved.</p>
       </div>
-    </footer>
+    </div>
+  </div>
+</footer>
+
     <script src="script.js"></script>
     <script src="floating-papers.js"></script>
   </body>
