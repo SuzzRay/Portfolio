@@ -3,6 +3,7 @@ let mouseX = 0
 let mouseY = 0
 let targetX = 0
 let targetY = 0
+let currentSection = "home" // Track current section - start with home
 
 // Initialize everything when DOM is loaded
 document.addEventListener("DOMContentLoaded", () => {
@@ -15,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initSkillBars()
   initSmoothScrolling()
   initAccessibility()
+  initSectionTracking()
 })
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -45,6 +47,278 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   type()
 })
+
+// Mobile Menu with Draggable Slider - Updated for 5 pages
+function initMobileMenu() {
+  const mobileMenuBtn = document.querySelector(".mobile-menu-btn")
+  const mobileMenu = document.querySelector(".mobile-menu")
+  const mobileMenuClose = document.querySelector(".mobile-menu-close")
+  const sliderNode = document.getElementById("sliderNode")
+  const centerPageName = document.getElementById("centerPageName")
+  const centerPageDesc = document.getElementById("centerPageDesc")
+  const pageLabels = document.querySelectorAll(".page-label")
+
+  if (!mobileMenuBtn || !mobileMenu || !sliderNode) return
+
+  // Page data - Updated for 5 pages
+  const pages = {
+    home: { name: "Home", desc: "Welcome to my portfolio", section: "hero" },
+    about: { name: "About", desc: "Learn more about me", section: "about" },
+    projects: { name: "Projects", desc: "My work & creations", section: "projects" },
+    skills: { name: "Skills", desc: "My technical abilities", section: "skills" },
+    contact: { name: "Contact", desc: "Get in touch", section: "contact" },
+  }
+
+  let currentPage = "home"
+  let isDragging = false
+  let centerX, centerY, radius
+
+  // Calculate circle properties
+  function calculateCircleProperties() {
+    const container = document.querySelector(".mobile-menu-inner")
+    const rect = container.getBoundingClientRect()
+    centerX = rect.width / 2
+    centerY = rect.height / 2
+    radius = rect.width / 2 - 60 // Account for padding
+  }
+
+  // Get angle for a page - Updated for 5 positions
+  function getPageAngle(page) {
+    const pageOrder = ["home", "about", "projects", "skills", "contact"]
+    const index = pageOrder.indexOf(page)
+    return index * 72 - 90 // Start from top, 72 degrees apart (360/5)
+  }
+
+  // Get page from angle - Updated for 5 positions
+  function getPageFromAngle(angle) {
+    // Normalize angle to 0-360
+    angle = ((angle % 360) + 360) % 360
+
+    const pageOrder = ["home", "about", "projects", "skills", "contact"]
+    const segmentSize = 72
+    const startAngle = 270 // Start from top
+
+    // Adjust angle relative to start position
+    const adjustedAngle = (angle - startAngle + 360) % 360
+
+    // Find which segment we're in
+    const segmentIndex = Math.round(adjustedAngle / segmentSize) % pageOrder.length
+    return pageOrder[segmentIndex]
+  }
+
+  // Position slider node
+  function positionSliderNode(angle) {
+    const radian = (angle * Math.PI) / 180
+    const x = centerX + radius * Math.cos(radian)
+    const y = centerY + radius * Math.sin(radian)
+
+    sliderNode.style.left = `${x}px`
+    sliderNode.style.top = `${y}px`
+    sliderNode.style.transform = "translate(-50%, -50%)"
+  }
+
+  // Update active page
+  function updateActivePage(page) {
+    if (currentPage === page) return
+
+    currentPage = page
+    const pageData = pages[page]
+
+    // Update center display
+    centerPageName.textContent = pageData.name
+    centerPageDesc.textContent = pageData.desc
+
+    // Update page labels
+    pageLabels.forEach((label) => {
+      if (label.dataset.page === page) {
+        label.classList.add("active")
+      } else {
+        label.classList.remove("active")
+      }
+    })
+  }
+
+  // Initialize slider position
+  function initializeSlider() {
+    calculateCircleProperties()
+    const angle = getPageAngle(currentPage)
+    positionSliderNode(angle)
+    updateActivePage(currentPage)
+  }
+
+  // Handle drag start
+  function handleDragStart(e) {
+    isDragging = true
+    sliderNode.style.transition = "none"
+
+    // Prevent default touch behavior
+    if (e.type === "touchstart") {
+      e.preventDefault()
+    }
+  }
+
+  // Handle drag move
+  function handleDragMove(e) {
+    if (!isDragging) return
+
+    e.preventDefault()
+
+    const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX
+    const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY
+
+    const container = document.querySelector(".mobile-menu-inner")
+    const rect = container.getBoundingClientRect()
+
+    // Calculate relative position
+    const x = clientX - rect.left - centerX
+    const y = clientY - rect.top - centerY
+
+    // Calculate angle
+    const angle = Math.atan2(y, x) * (180 / Math.PI)
+
+    // Position node on circle
+    positionSliderNode(angle)
+
+    // Update active page based on angle
+    const nearestPage = getPageFromAngle(angle)
+    updateActivePage(nearestPage)
+  }
+
+  // Handle drag end
+  function handleDragEnd(e) {
+    if (!isDragging) return
+
+    isDragging = false
+    sliderNode.style.transition = "all 0.3s ease"
+
+    // Snap to nearest page position
+    const targetAngle = getPageAngle(currentPage)
+    positionSliderNode(targetAngle)
+
+    // Add a small delay before allowing navigation
+    setTimeout(() => {
+      navigateToPage(currentPage)
+    }, 300)
+  }
+
+  // Navigate to page
+  function navigateToPage(page) {
+    const pageData = pages[page]
+    if (!pageData.section) return
+
+    closeMobileMenu()
+
+    setTimeout(() => {
+      let targetSection
+      if (pageData.section === "hero") {
+        // Scroll to top for home
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth",
+        })
+      } else {
+        targetSection = document.querySelector(`#${pageData.section}`)
+        if (targetSection) {
+          const offsetTop = targetSection.offsetTop - 100
+          window.scrollTo({
+            top: offsetTop,
+            behavior: "smooth",
+          })
+        }
+      }
+    }, 300)
+  }
+
+  // Open mobile menu
+  mobileMenuBtn.addEventListener("click", () => {
+    mobileMenu.classList.add("active")
+    mobileMenuBtn.setAttribute("aria-expanded", "true")
+    document.body.style.overflow = "hidden"
+
+    // Initialize slider after menu is visible
+    setTimeout(initializeSlider, 100)
+  })
+
+  // Close mobile menu
+  function closeMobileMenu() {
+    mobileMenu.classList.remove("active")
+    mobileMenuBtn.setAttribute("aria-expanded", "false")
+    document.body.style.overflow = ""
+  }
+
+  // Close button
+  if (mobileMenuClose) {
+    mobileMenuClose.addEventListener("click", closeMobileMenu)
+  }
+
+  // Mouse events for slider
+  sliderNode.addEventListener("mousedown", handleDragStart)
+  document.addEventListener("mousemove", handleDragMove)
+  document.addEventListener("mouseup", handleDragEnd)
+
+  // Touch events for slider
+  sliderNode.addEventListener("touchstart", handleDragStart, { passive: false })
+  document.addEventListener("touchmove", handleDragMove, { passive: false })
+  document.addEventListener("touchend", handleDragEnd)
+
+  // Close mobile menu when clicking outside
+  mobileMenu.addEventListener("click", (e) => {
+    if (e.target === mobileMenu) {
+      closeMobileMenu()
+    }
+  })
+
+  // Handle escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && mobileMenu.classList.contains("active")) {
+      closeMobileMenu()
+      mobileMenuBtn.focus()
+    }
+  })
+
+  // Handle window resize
+  window.addEventListener("resize", () => {
+    if (mobileMenu.classList.contains("active")) {
+      setTimeout(initializeSlider, 100)
+    }
+  })
+}
+
+// Section Tracking for Mobile Menu - Updated for projects section
+function initSectionTracking() {
+  const sections = document.querySelectorAll("section[id]")
+
+  const observerOptions = {
+    threshold: 0.3,
+    rootMargin: "-100px 0px -100px 0px",
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        currentSection = entry.target.id
+        updateActiveNavItem()
+      }
+    })
+  }, observerOptions)
+
+  sections.forEach((section) => observer.observe(section))
+
+  function updateActiveNavItem() {
+    const pageLabels = document.querySelectorAll(".page-label")
+    pageLabels.forEach((label) => {
+      const page = label.getAttribute("data-page")
+      if (page === currentSection || (currentSection === "hero" && page === "home")) {
+        label.classList.add("active")
+      } else {
+        label.classList.remove("active")
+      }
+    })
+  }
+
+  // Initial update
+  updateActiveNavItem()
+}
 
 // Mouse Follower
 function initMouseFollower() {
@@ -77,8 +351,8 @@ function initMouseFollower() {
 
   // Smooth mouse follower animation
   function animateMouseFollower() {
-    mouseX += (targetX - mouseX) * 0.1
-    mouseY += (targetY - mouseY) * 0.1
+    mouseX += (targetX - mouseX) * 0.05
+    mouseY += (targetY - mouseY) * 0.05
 
     mouseFollower.style.left = mouseX + "px"
     mouseFollower.style.top = mouseY + "px"
@@ -127,62 +401,6 @@ function initFloatingNav() {
   window.addEventListener("scroll", throttledScroll)
 }
 
-// Mobile Menu
-function initMobileMenu() {
-  const mobileMenuBtn = document.querySelector(".mobile-menu-btn")
-  const mobileMenu = document.querySelector(".mobile-menu")
-  const mobileMenuLinks = document.querySelectorAll(".mobile-menu-content a")
-
-  if (!mobileMenuBtn || !mobileMenu) return
-
-  mobileMenuBtn.addEventListener("click", () => {
-    const isActive = mobileMenu.classList.contains("active")
-    mobileMenu.classList.toggle("active")
-
-    const icon = mobileMenuBtn.querySelector("i")
-    if (!isActive) {
-      icon.className = "fas fa-times"
-      mobileMenuBtn.setAttribute("aria-expanded", "true")
-      document.body.style.overflow = "hidden"
-    } else {
-      icon.className = "fas fa-bars"
-      mobileMenuBtn.setAttribute("aria-expanded", "false")
-      document.body.style.overflow = ""
-    }
-  })
-
-  // Close mobile menu when clicking on links
-  mobileMenuLinks.forEach((link) => {
-    link.addEventListener("click", () => {
-      mobileMenu.classList.remove("active")
-      mobileMenuBtn.querySelector("i").className = "fas fa-bars"
-      mobileMenuBtn.setAttribute("aria-expanded", "false")
-      document.body.style.overflow = ""
-    })
-  })
-
-  // Close mobile menu when clicking outside
-  mobileMenu.addEventListener("click", (e) => {
-    if (e.target === mobileMenu) {
-      mobileMenu.classList.remove("active")
-      mobileMenuBtn.querySelector("i").className = "fas fa-bars"
-      mobileMenuBtn.setAttribute("aria-expanded", "false")
-      document.body.style.overflow = ""
-    }
-  })
-
-  // Handle escape key
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && mobileMenu.classList.contains("active")) {
-      mobileMenu.classList.remove("active")
-      mobileMenuBtn.querySelector("i").className = "fas fa-bars"
-      mobileMenuBtn.setAttribute("aria-expanded", "false")
-      document.body.style.overflow = ""
-      mobileMenuBtn.focus()
-    }
-  })
-}
-
 // Hero Animation (Canvas)
 function initHeroAnimation() {
   const canvas = document.getElementById("heroCanvas")
@@ -208,8 +426,8 @@ function initHeroAnimation() {
       this.x = Math.random() * canvas.width
       this.y = Math.random() * canvas.height
       this.size = Math.random() * 5 + 1
-      this.speedX = Math.random() * 2 - 1
-      this.speedY = Math.random() * 2 - 1
+      this.speedX = Math.random() * 0.5 - 0.25
+      this.speedY = Math.random() * 0.5 - 0.25
       this.hue = Math.random() * 60 + 200 // Blue to purple range
     }
 
@@ -237,7 +455,7 @@ function initHeroAnimation() {
   // Initialize particles
   function initParticles() {
     particles = []
-    const particleCount = Math.min(50, Math.floor((canvas.width * canvas.height) / 10000))
+    const particleCount = Math.min(25, Math.floor((canvas.width * canvas.height) / 15000))
 
     for (let i = 0; i < particleCount; i++) {
       particles.push(new Particle())
@@ -366,40 +584,6 @@ function initAccessibility() {
     mobileMenuBtn.setAttribute("aria-expanded", "false")
   }
 
-  // Add focus management for mobile menu
-  const mobileMenu = document.querySelector(".mobile-menu")
-  const mobileMenuLinks = document.querySelectorAll(".mobile-menu-content a, .mobile-menu-content button")
-
-  if (mobileMenu && mobileMenuLinks.length > 0) {
-    // Focus first link when menu opens
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === "attributes" && mutation.attributeName === "class") {
-          if (mobileMenu.classList.contains("active")) {
-            mobileMenuLinks[0].focus()
-          }
-        }
-      })
-    })
-
-    observer.observe(mobileMenu, { attributes: true })
-
-    // Trap focus within mobile menu
-    mobileMenuLinks.forEach((link, index) => {
-      link.addEventListener("keydown", (e) => {
-        if (e.key === "Tab") {
-          if (e.shiftKey && index === 0) {
-            e.preventDefault()
-            mobileMenuLinks[mobileMenuLinks.length - 1].focus()
-          } else if (!e.shiftKey && index === mobileMenuLinks.length - 1) {
-            e.preventDefault()
-            mobileMenuLinks[0].focus()
-          }
-        }
-      })
-    })
-  }
-
   // Add skip link
   const skipLink = document.createElement("a")
   skipLink.href = "#main"
@@ -453,7 +637,7 @@ function throttle(func, limit) {
   let inThrottle
   return function () {
     const args = arguments
-    
+
     if (!inThrottle) {
       func.apply(this, args)
       inThrottle = true
