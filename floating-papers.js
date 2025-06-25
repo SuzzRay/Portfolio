@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("floating-papers")
-  const paperCount = 4
+  const paperCount = 6
 
   // Create floating papers
   function createFloatingPapers() {
@@ -35,9 +35,9 @@ document.addEventListener("DOMContentLoaded", () => {
     let x = Number.parseFloat(paper.style.left)
     let y = Number.parseFloat(paper.style.top)
     let angle = Math.random() * 2 * Math.PI
-    const speed = 0.1 + Math.random() * 0.2
+    const speed = 0.3 + Math.random() * 0.5
     let rotation = Math.random() * 360
-    const rotationSpeed = (Math.random() - 0.5) * 0.05
+    const rotationSpeed = (Math.random() - 0.5) * 0.2
 
     function update() {
       // Movement direction
