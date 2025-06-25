@@ -227,16 +227,16 @@ body {
   background: rgba(63, 63, 70, 0.5);
 }
 
-/* Mobile Menu */
+/* Mobile Menu - Fixed Circle with Draggable Node */
 .mobile-menu {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.9);
-  backdrop-filter: blur(12px);
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
   z-index: 999;
   display: none;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .mobile-menu.active {
@@ -244,25 +244,261 @@ body {
   opacity: 1;
 }
 
+.mobile-menu-container {
+  position: relative;
+  width: 350px;
+  height: 350px;
+  margin: auto;
+}
+
 .mobile-menu-content {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(
+    from 0deg,
+    rgba(139, 92, 246, 0.2),
+    rgba(236, 72, 153, 0.2),
+    rgba(59, 130, 246, 0.2),
+    rgba(139, 92, 246, 0.2)
+  );
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
-  gap: 32px;
+  box-shadow: 0 0 100px rgba(139, 92, 246, 0.3);
 }
 
-.mobile-menu-content a {
-  font-size: 2rem;
+.mobile-menu-content::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  background: rgba(24, 24, 27, 0.95);
+  border-radius: 50%;
+  backdrop-filter: blur(12px);
+}
+
+.mobile-menu-inner {
+  position: relative;
+  z-index: 2;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Fixed Page Names Around Circle */
+.page-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.page-label {
+  position: absolute;
+  font-size: 0.9rem;
   font-weight: 500;
-  color: white;
-  text-decoration: none;
-  transition: color 0.3s ease;
+  color: var(--zinc-400);
+  text-align: center;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
 }
 
-.mobile-menu-content a:hover {
-  color: var(--purple-400);
+.page-label.active {
+  color: white;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.8);
+  transform: scale(1.1);
+}
+
+/* Position labels around the circle - 4 positions */
+.page-label[data-page="home"] {
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.page-label[data-page="about"] {
+  top: 35%;
+  right: 15px;
+  transform: translateY(-50%);
+}
+
+.page-label[data-page="projects"] {
+  bottom: 35%;
+  right: 15px;
+  transform: translateY(50%);
+}
+
+.page-label[data-page="skills"] {
+  bottom: 35%;
+  left: 15px;
+  transform: translateY(50%);
+}
+
+.page-label[data-page="contact"] {
+  top: 35%;
+  left: 15px;
+  transform: translateY(-50%);
+}
+
+/* Circular Track */
+.circle-track {
+  position: absolute;
+  inset: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.circle-track::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent,
+    rgba(139, 92, 246, 0.3),
+    transparent,
+    rgba(236, 72, 153, 0.3),
+    transparent
+  );
+  mask: radial-gradient(circle, transparent 50%, black 52%);
+  -webkit-mask: radial-gradient(circle, transparent 50%, black 52%);
+}
+
+/* Draggable Slider Node */
+.slider-node {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background: linear-gradient(45deg, var(--purple-500), var(--pink-500));
+  border-radius: 50%;
+  cursor: grab;
+  z-index: 10;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.6);
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.slider-node:active {
+  cursor: grabbing;
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.8);
+}
+
+.slider-node::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.3), transparent);
+  animation: pulse-node 2s infinite;
+}
+
+@keyframes pulse-node {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+}
+
+/* Center Info Display */
+.center-info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.center-page-name {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 8px;
+  text-shadow: 0 0 10px rgba(139, 92, 246, 0.8);
+}
+
+.center-page-desc {
+  font-size: 0.8rem;
+  color: var(--zinc-400);
+  max-width: 120px;
+  line-height: 1.3;
+}
+
+.mobile-menu-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+.mobile-menu-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .mobile-menu-container {
+    width: 300px;
+    height: 300px;
+  }
+
+  .mobile-menu-inner {
+    width: 240px;
+    height: 240px;
+  }
+
+  .page-label {
+    font-size: 0.8rem;
+  }
+
+  .center-page-name {
+    font-size: 1rem;
+  }
+
+  .center-page-desc {
+    font-size: 0.75rem;
+    max-width: 100px;
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Buttons */
@@ -360,7 +596,7 @@ body {
   background: var(--purple-500); /* or --yellow-500 / --pink-500 */
   filter: blur(96px); /* more blur = softer glow */
   opacity: 0.3; /* dimmed appearance */
-  animation: blob 7s infinite;
+  animation: blob 15s infinite;
   mix-blend-mode: screen; /* best for glow-like overlay */
   z-index: 0;
 }
@@ -375,14 +611,14 @@ body {
   top: 160px;
   right: 40px;
   background: var(--yellow-500);
-  animation-delay: 2s;
+  animation-delay: 5s;
 }
 
 .blob-3 {
   bottom: 80px;
   left: 33.333%;
   background: var(--pink-500);
-  animation-delay: 4s;
+  animation-delay: 10s;
 }
 
 @keyframes blob {
@@ -439,7 +675,7 @@ body {
   inset: 0;
   border-radius: 50px;
   background: linear-gradient(to right, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
-  animation: pulse 2s infinite;
+  animation: pulse 4s infinite;
 }
 
 .hero-badge span {
@@ -521,7 +757,7 @@ body {
   bottom: 40px;
   left: 50%;
   transform: translateX(-50%);
-  animation: bounce 2s infinite;
+  animation: bounce 3s infinite;
 }
 
 .scroll-mouse {
@@ -540,7 +776,7 @@ body {
   height: 6px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.6);
-  animation: pulse 2s infinite;
+  animation: pulse 4s infinite;
 }
 
 @keyframes bounce {
@@ -667,7 +903,7 @@ section {
   inset: 0;
   border-radius: 50px;
   background: linear-gradient(to right, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
-  animation: pulse 2s infinite;
+  animation: pulse 4s infinite;
 }
 
 .section-badge span {
@@ -788,7 +1024,7 @@ section {
   height: 12px;
   border-radius: 50%;
   background: var(--green-500);
-  animation: pulse 2s infinite;
+  animation: pulse 4s infinite;
 }
 
 .about-text p {
@@ -1504,11 +1740,11 @@ section {
 }
 
 .animate-pulse {
-  animation: pulse 2s infinite;
+  animation: pulse 4s infinite;
 }
 
 .animate-float {
-  animation: float 3s ease-in-out infinite;
+  animation: float 6s ease-in-out infinite;
 }
 
 /* Floating papers */
@@ -1533,7 +1769,7 @@ section {
 }
 
 .floating-paper:hover {
-  transform: scale(1.1);
+  transform: scale(1.05);
 }
 
 .floating-paper i {
@@ -1557,7 +1793,7 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: float 4s ease-in-out infinite;
+  animation: float 6s ease-in-out infinite;
 }
 
 .robo-glow {
@@ -1566,7 +1802,7 @@ section {
   background-color: rgba(147, 51, 234, 0.2);
   border-radius: 50%;
   filter: blur(1.5rem);
-  animation: pulse 4s ease-in-out infinite;
+  animation: pulse 6s ease-in-out infinite;
 }
 
 .robo-animation i {
@@ -1813,6 +2049,10 @@ section {
   .status-dot {
     animation: none;
   }
+
+  .mobile-menu-content {
+    animation: none;
+  }
 }
 
 /* Print Styles */
@@ -1875,10 +2115,4 @@ section {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-.contact-link {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  color: inherit;
 }
