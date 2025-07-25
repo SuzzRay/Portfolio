@@ -348,5 +348,33 @@
 
     <script src="script.js"></script>
     <script src="floating-papers.js"></script>
+      <script>
+  // Disable Right Click
+  document.addEventListener("contextmenu", function (e) {
+    e.preventDefault();
+  });
+
+  // Disable F12 and other DevTools shortcuts
+  document.addEventListener("keydown", function (e) {
+    if (
+      e.key === "F12" ||
+      (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J" || e.key === "C")) ||
+      (e.ctrlKey && e.key === "U")
+    ) {
+      e.preventDefault();
+    }
+  });
+
+  // Detect if DevTools is open (ineffective on all browsers)
+  setInterval(() => {
+    const devtools = /./;
+    devtools.toString = function () {
+      document.body.innerHTML = "DevTools is not allowed on this site.";
+      return "";
+    };
+    console.log(devtools);
+  }, 1000);
+</script>
+
   </body>
 </html>
